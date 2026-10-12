@@ -6,7 +6,7 @@
         {
             Value = !string.IsNullOrEmpty(accountNumber)
                 && accountNumber.Length == 13
-                && accountNumber.All(char.IsDigit) ? accountNumber : throw new ArgumentException();
+                && accountNumber.All(char.IsDigit) ? accountNumber : throw new ArgumentException("شماره حساب معتبر نمی باشد");
         }
 
         public string Value { get; private set; }

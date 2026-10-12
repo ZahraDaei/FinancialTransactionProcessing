@@ -8,7 +8,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void PendingToProcessingTest()
         {
             //Arange
-            var transaction = new Transaction("123456", "456789", 10000M, "IR");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
             //Act
             transaction.MarkAsProcessing();
             //Assert
@@ -18,7 +18,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void PendingToCompletedShouldThrow()
         {
             //Arange
-            var transaction = new Transaction("123456", "456789", 10000M, "IR");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
             //Act
             Action completeAction = () => transaction.MarkAsCompleted();
             //Assert
@@ -29,7 +29,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void ProcessingToProcessingShouldThrow()
         {
             //Arange
-            var transaction = new Transaction("123456", "456789", 10000M, "IR");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
             //Act
             transaction.MarkAsProcessing();
             Action processingAction = () => transaction.MarkAsProcessing();
@@ -41,7 +41,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsComplete_WhenProcessing_ShouldChangeStatusToComplete()
         {
             //Arrange
-            var transaction= new Transaction("123456", "456789", 10000M, "IR");
+            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
 
             //Act
             transaction.MarkAsProcessing();
@@ -55,7 +55,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsFailed_WhenProcessing_ShouldChangeStatusToFail()
         {
             //Arrange
-            var transaction= new Transaction("123456", "456789", 10000M, "IR");
+            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
 
             //Act
             transaction.MarkAsProcessing();
@@ -69,7 +69,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsProcessing_WhenComplete_ShouldThrow()
         {
             //Arrange
-            var transaction= new Transaction("123456", "456789", 10000M, "IR");
+            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
 
             //Act
             transaction.MarkAsProcessing();
@@ -84,7 +84,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsComplete_WhenPending_ShouldThrow()
         {
             //Arrange
-            var transaction= new Transaction("123456", "456789", 10000M, "IR");
+            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
 
             //Act
 
@@ -96,7 +96,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsProcessing_WhenFailed_ShouldThrow()
         {
             //Arrange
-            var transaction= new Transaction("123456", "456789", 10000M, "IR");
+            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
 
             //Act
             transaction.MarkAsProcessing();
@@ -113,7 +113,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
             //Arrange
             var amount = -12M;
             //Act
-            Action negativeAmount = () => new Transaction("1234567891234", "4563217893214", amount, "IR");
+            Action negativeAmount = () => new Transaction("IRI", "4563217893214", amount, "IRI");
             //Assert
             Assert.Throws<ArgumentException>(negativeAmount);
         
@@ -125,7 +125,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
             //Arrange
             var amount = 0;
             //Act
-            Action negativeAmount = () => new Transaction("1234567891234", "4563217893214", amount, "IR");
+            Action negativeAmount = () => new Transaction("IRI", "4563217893214", amount, "IRI");
             //Assert
             Assert.Throws<ArgumentException>(negativeAmount);
         

@@ -9,10 +9,10 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void CreateTransaction_WithValidAccountNumber_ShouldSucced()
         {
             //Arange
-            var sourceAccountNumber = "1234567891234";
+            var sourceAccountNumber = "4567891234567";
             var destinationAccountNumber = "1234567891235";
             //Act
-            var transaction = new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IR");
+            var transaction = new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IRI");
 
             //Asert
             Assert.Equal(destinationAccountNumber, transaction.DestinationAccount.Value);
@@ -23,11 +23,11 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void CreateTransaction_withSameSourceAndDestination_shouldThrow()
         {
             //Arrange
-            var sourceAccountNumber = "1234567891234";
-            var destinationAccountNumber = "1234567891234";
+            var sourceAccountNumber = "IRI";
+            var destinationAccountNumber = "IRI";
 
             //Act
-            Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IR");
+            Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IRI");
 
             //Assert
             Assert.Throws<ArgumentException>(transaction);
@@ -38,10 +38,10 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         {
             //Arrange
             var sourceAccountNumber = "1234567891234677";
-            var destinationAccountNumber = "1234567891234";
+            var destinationAccountNumber = "IRI";
 
             //Act
-            Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IR");
+            Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IRI");
 
             //Assert
             Assert.Throws<ArgumentException>(transaction);

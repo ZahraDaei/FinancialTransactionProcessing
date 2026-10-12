@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FinancialTransactionProcessing.Application\FinancialTransactionProcessing.Application.csproj" />
     <ProjectReference Include="..\FinancialTransactionProcessing.Domain\FinancialTransactionProcessing.Domain.csproj" />
   </ItemGroup>
 

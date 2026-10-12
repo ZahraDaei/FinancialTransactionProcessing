@@ -21,7 +21,7 @@ namespace FinancialTransactionProcessing.Domain.Entities
             Id = Guid.NewGuid();
             SourceAccount = sourceAccountNumber;
             DestinationAccount = destinationAccountNumber;
-            Amount = amount<=0 ? throw new ArgumentException():amount;
+            Amount = amount<=0 ? throw new ArgumentException("مبلغ نمی تواند منفی یا صفر باشد"):amount;
             Currency =new Currency(currency);
             Status = TransactionStatus.Pending;
             CreatedAt = DateTime.Now;
