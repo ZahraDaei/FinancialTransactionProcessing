@@ -1,6 +1,5 @@
 using FinancialTransactionProcessing.Api.Contracts;
 using FinancialTransactionProcessing.Application.Transactions;
-using FinancialTransactionProcessing.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinancialTransactionProcessing.Api.Controllers
@@ -11,19 +10,50 @@ namespace FinancialTransactionProcessing.Api.Controllers
     {
 
         private readonly ILogger<TransactionsController> _logger;
-        private readonly CreateTransactionUseCase _useCase;
+        private readonly CreateTransactionUseCase _createUseCase;
+        private readonly GetTransactionByIdUseCase _getUseCase;
 
-        public TransactionsController(ILogger<TransactionsController> logger, CreateTransactionUseCase useCase)
+        public TransactionsController(ILogger<TransactionsController> logger,
+                                      CreateTransactionUseCase createUseCase,
+                                      GetTransactionByIdUseCase getUseCase)
         {
             _logger = logger;
-            _useCase = useCase;
+            _createUseCase = createUseCase;
+            _getUseCase = getUseCase;
         }
 
         [HttpPost]
-        public ActionResult<TransactionResponse> CreateTransaction(CreateTransactionRequest request)
+        public async Task<ActionResult<TransactionResponse>> CreateTransaction(
+          CreateTransactionRequest request,
+          CancellationToken cancellationToken)
         {
-            var transaction = _useCase.Execute(request.SourceAccount, request.DestinationAccount, request.Amount, request.Currency);
-            return Ok(new TransactionResponse()
+            var transaction = await _createUseCase.Execute(
+                request.SourceAccount,
+                request.DestinationAccount,
+                request.Amount,
+                request.Currency,
+                cancellationToken);
+
+            return Ok(new TransactionResponse
+            {
+                Amount = transaction.Amount,
+                CreatedAt = transaction.CreatedAt,
+                Currency = transaction.Currency.Value,
+                DestinationAccount = transaction.DestinationAccount.Value,
+                Id = transaction.Id,
+                SourceAccount = transaction.SourceAccount.Value,
+                Status = transaction.Status.ToString()
+            });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<TransactionResponse>> GetTransaction(
+          Guid id,
+          CancellationToken cancellationToken)
+        {
+            var transaction = await _getUseCase.Execute(id,cancellationToken);
+
+            return Ok(new TransactionResponse
             {
                 Amount = transaction.Amount,
                 CreatedAt = transaction.CreatedAt,

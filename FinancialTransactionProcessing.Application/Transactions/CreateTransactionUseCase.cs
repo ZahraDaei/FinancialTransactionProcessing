@@ -1,17 +1,22 @@
-﻿using FinancialTransactionProcessing.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FinancialTransactionProcessing.Application.Abstractions.Repositories;
+using FinancialTransactionProcessing.Domain.Entities;
+
 
 namespace FinancialTransactionProcessing.Application.Transactions
 {
     public class CreateTransactionUseCase
     {
-        public Transaction Execute(string sourceAccount, string destinationAccount,decimal amount,string currency)
+        private readonly ITransactionRepository _transactionRepository;
+
+        public CreateTransactionUseCase(ITransactionRepository transactionRepository)
         {
-            return new Transaction(sourceAccount, destinationAccount, amount, currency);
+            _transactionRepository = transactionRepository;
+        }
+        public async Task<Transaction> Execute(string sourceAccount, string destinationAccount, decimal amount, string currency, CancellationToken cancellationToken)
+        {
+            Transaction transaction = new Transaction(sourceAccount, destinationAccount, amount, currency);
+            await _transactionRepository.AddAsync(transaction, cancellationToken);
+            return transaction;
         }
     }
 }

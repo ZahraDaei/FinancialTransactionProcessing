@@ -5,12 +5,16 @@ namespace FinancialTransactionProcessing.Domain.Entities
     public class Transaction
     {
         public Guid Id { get; private set; }
-        public AccountNumber SourceAccount { get; }
-        public AccountNumber DestinationAccount { get; }
+        public AccountNumber SourceAccount { get; private set; }
+        public AccountNumber DestinationAccount { get; private set; }
         public decimal Amount { get; private set; }
         public Currency Currency { get; private set; }
         public TransactionStatus Status { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        private Transaction()
+        {
+            
+        }
 
         public Transaction(string sourceAccount, string destinationAccount, decimal amount, string currency)
         {
@@ -24,7 +28,7 @@ namespace FinancialTransactionProcessing.Domain.Entities
             Amount = amount<=0 ? throw new ArgumentException("مبلغ نمی تواند منفی یا صفر باشد"):amount;
             Currency =new Currency(currency);
             Status = TransactionStatus.Pending;
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
         }
 
         private void CheckForSourceAndDestinationAccountNumber(AccountNumber accountNumber1, AccountNumber accountNumber2)
