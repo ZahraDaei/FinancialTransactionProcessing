@@ -46,13 +46,16 @@ namespace FinancialTransactionProcessing.Api.Controllers
             });
         }
 
-        [HttpGet]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<TransactionResponse>> GetTransaction(
           Guid id,
           CancellationToken cancellationToken)
         {
-            var transaction = await _getUseCase.Execute(id,cancellationToken);
-
+            var transaction = await _getUseCase.Execute(id, cancellationToken);
+            if (transaction is null)
+            {
+                return NotFound();
+            }
             return Ok(new TransactionResponse
             {
                 Amount = transaction.Amount,
