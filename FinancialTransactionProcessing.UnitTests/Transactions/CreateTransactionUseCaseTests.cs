@@ -1,30 +1,35 @@
-﻿//using FinancialTransactionProcessing.Application.Transactions;
-//using FinancialTransactionProcessing.Domain.Entities;
-//using FinancialTransactionProcessing.Domain.ValueObjects;
-//using Xunit;
+﻿using FinancialTransactionProcessing.Application.Abstractions.Repositories;
+using FinancialTransactionProcessing.Application.Transactions;
+using FinancialTransactionProcessing.Domain.Entities;
+using Moq;
 
-//namespace FinancialTransactionProcessing.UnitTests.Transactions
-//{
-//    public class CreateTransactionUseCaseTests
-//    {
-//        [Fact]
-//        public void Execute_WithValidInput_ShouldCreatePendingTransaction()
-//        {
-//            var transactionExecuter = new CreateTransactionUseCase();
-//            var sourceAcc ="4567891234567";
-//            var destAcc ="1234567893214";
-//            var amount =1000M;
-//            var currency ="IRI";
+namespace FinancialTransactionProcessing.UnitTests.Transactions
+{
+    public class CreateTransactionUseCaseTests
+    {
+        [Fact]
+        public async void Execute_WithValidInput_ShouldCreatePendingTransaction()
+        {
+            var moqTransactionRepository = new Mock<ITransactionRepository>();
+            var newTransaction = new Transaction(
+                  "1234567891234",
+                  "4567891236541",
+                  156000,
+                  "IRR");
+            moqTransactionRepository.Setup(x => x.AddAsync(newTransaction, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+            var transactionExecuter = new CreateTransactionUseCase(moqTransactionRepository.Object);
 
+            var transaction = await transactionExecuter.Execute("1234567891234",
+                                                          "4567891236541",
+                                                          156000,
+                                                          "IRR",
+                                                          It.IsAny<CancellationToken>());
 
-//            var transaction=transactionExecuter.Execute(sourceAcc, destAcc,amount , currency);
-
-        
-//            Assert.Equal(TransactionStatus.Pending,transaction.Status);
-//            Assert.Equal(amount,transaction.Amount);
-//            Assert.Equal(sourceAcc, transaction.SourceAccount.Value);
-//            Assert.Equal(destAcc, transaction.DestinationAccount.Value);
-//            Assert.Equal(currency, transaction.Currency.Value);
-//        }
-//    }
-//}
+            Assert.Equal(TransactionStatus.Pending, transaction.Status);
+            Assert.Equal(newTransaction.Amount, transaction.Amount);
+            Assert.Equal(newTransaction.SourceAccount, transaction.SourceAccount);
+            Assert.Equal(newTransaction.DestinationAccount, transaction.DestinationAccount);
+            Assert.Equal(newTransaction.Currency, transaction.Currency);
+        }
+    }
+}

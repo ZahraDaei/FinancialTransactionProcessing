@@ -16,7 +16,7 @@ namespace FinancialTransactionProcessing.Infrastructure.Repositories
         public async Task AddAsync(Transaction transaction, CancellationToken cancellationToken = default)
         {
             await _context.Transactions.AddAsync(transaction, cancellationToken);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<Transaction?> GetByIdAsync(

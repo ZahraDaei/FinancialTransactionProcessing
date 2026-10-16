@@ -1,7 +1,4 @@
-﻿
-using System.Text.Json;
-
-namespace FinancialTransactionProcessing.Api.Middleware;
+﻿namespace FinancialTransactionProcessing.Api.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
@@ -39,7 +36,7 @@ public class ExceptionHandlingMiddleware
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             await context.Response.WriteAsJsonAsync(new
             {
-                StatusCode= StatusCodes.Status400BadRequest,
+                StatusCode = StatusCodes.Status500InternalServerError,
                 Message = "An unexpected error occurred"
             });
         }

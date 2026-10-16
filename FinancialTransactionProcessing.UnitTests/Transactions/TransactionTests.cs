@@ -8,7 +8,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void PendingToProcessingTest()
         {
             //Arange
-            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
             //Act
             transaction.MarkAsProcessing();
             //Assert
@@ -18,18 +18,18 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void PendingToCompletedShouldThrow()
         {
             //Arange
-            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
             //Act
             Action completeAction = () => transaction.MarkAsCompleted();
             //Assert
             Assert.Throws<InvalidOperationException>(completeAction);
         }
-        
+
         [Fact]
         public void ProcessingToProcessingShouldThrow()
         {
             //Arange
-            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
             //Act
             transaction.MarkAsProcessing();
             Action processingAction = () => transaction.MarkAsProcessing();
@@ -41,7 +41,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsComplete_WhenProcessing_ShouldChangeStatusToComplete()
         {
             //Arrange
-            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
 
             //Act
             transaction.MarkAsProcessing();
@@ -55,7 +55,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsFailed_WhenProcessing_ShouldChangeStatusToFail()
         {
             //Arrange
-            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
 
             //Act
             transaction.MarkAsProcessing();
@@ -69,14 +69,14 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsProcessing_WhenComplete_ShouldThrow()
         {
             //Arrange
-            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
 
             //Act
             transaction.MarkAsProcessing();
             transaction.MarkAsCompleted();
 
             //Assert
-            Action processingAction=() => transaction.MarkAsProcessing();
+            Action processingAction = () => transaction.MarkAsProcessing();
             Assert.Throws<InvalidOperationException>(processingAction);
         }
 
@@ -84,26 +84,26 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void MarkAsComplete_WhenPending_ShouldThrow()
         {
             //Arrange
-            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
 
             //Act
 
             //Assert
-            Action completeAction=() => transaction.MarkAsCompleted();
+            Action completeAction = () => transaction.MarkAsCompleted();
             Assert.Throws<InvalidOperationException>(completeAction);
         }
         [Fact]
         public void MarkAsProcessing_WhenFailed_ShouldThrow()
         {
             //Arrange
-            var transaction= new Transaction("1234567891236", "4567891234528", 10000M, "IRI");
+            var transaction = new Transaction("1234567891236", "4567891234528", 10000M, "IRR");
 
             //Act
             transaction.MarkAsProcessing();
             transaction.MarkAsFailed();
 
             //Assert
-            Action processingAction=() => transaction.MarkAsProcessing();
+            Action processingAction = () => transaction.MarkAsProcessing();
             Assert.Throws<InvalidOperationException>(processingAction);
         }
 
@@ -113,10 +113,10 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
             //Arrange
             var amount = -12M;
             //Act
-            Action negativeAmount = () => new Transaction("IRI", "4563217893214", amount, "IRI");
+            Action negativeAmount = () => new Transaction("1234567891235", "4563217893214", amount, "IRR");
             //Assert
             Assert.Throws<ArgumentException>(negativeAmount);
-        
+
         }
 
         [Fact]
@@ -125,12 +125,12 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
             //Arrange
             var amount = 0;
             //Act
-            Action negativeAmount = () => new Transaction("IRI", "4563217893214", amount, "IRI");
+            Action negativeAmount = () => new Transaction("1234567892574", "4563217893214", amount, "IRR");
             //Assert
             Assert.Throws<ArgumentException>(negativeAmount);
-        
+
         }
 
-    
+
     }
 }

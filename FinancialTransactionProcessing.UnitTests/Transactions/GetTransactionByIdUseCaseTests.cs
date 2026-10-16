@@ -15,7 +15,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
                     "1234567891234",
                     "4567891236541",
                     156000,
-                    "IRI");
+                    "IRR");
 
             var transactionRepositoryMoq = new Mock<ITransactionRepository>();
 

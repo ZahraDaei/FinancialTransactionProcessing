@@ -4,16 +4,16 @@ namespace FinancialTransactionProcessing.Domain.ValueObjects
 {
     public class Currency
     {
-        public string Value { get;}
+        public string Value { get; }
         public Currency(string value)
         {
-            if (string.IsNullOrWhiteSpace(value)|| value.Length != 3 || !Regex.IsMatch(value,@"^[a-zA-Z]{3}$") )
+            if (string.IsNullOrWhiteSpace(value) || value.Length != 3 || !Regex.IsMatch(value, @"^[a-zA-Z]{3}$"))
             {
                 throw new ArgumentException(
                    "نرخ ارز بایستی حروف انگلیسی و طول سه کاراکتر باشد",
                    nameof(value));
             }
-            Value = value;
+            Value = value.ToUpperInvariant();
 
         }
 
@@ -23,8 +23,12 @@ namespace FinancialTransactionProcessing.Domain.ValueObjects
             {
                 return false;
             }
-            this.GetHashCode();
             return currency.Value == Value;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Value.GetHashCode();
         }
     }
 }

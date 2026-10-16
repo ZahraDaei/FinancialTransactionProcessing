@@ -1,4 +1,5 @@
 ﻿using FinancialTransactionProcessing.Domain.Entities;
+using FinancialTransactionProcessing.Domain.ValueObjects;
 
 namespace FinancialTransactionProcessing.UnitTests.Transactions
 {
@@ -16,7 +17,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         [Fact]
         public void CreateTransaction_EmptyCurrency_ShouldThrow()
         {
-            var sourceAccountNumber = "IRI";
+            var sourceAccountNumber = "IRR";
             var destinationAccountNumber = "1234567891235";
             var currency = "";
             Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, currency);
@@ -27,7 +28,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void CreateTransaction_InvalidCurrency_ShouldThrow()
         {
 
-            var sourceAccountNumber = "IRI";
+            var sourceAccountNumber = "IRR";
             var destinationAccountNumber = "1234567891235";
             var currency = "U";
             Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, currency);
@@ -38,7 +39,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void CreateCurrency_WithNonLetterCharacters_ShouldThrow()
         {
 
-            var sourceAccountNumber = "IRI";
+            var sourceAccountNumber = "IRR";
             var destinationAccountNumber = "1234567891235";
             var currency = "12345";
             Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, currency);
@@ -49,12 +50,21 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void CreateCurrency_WithNonLetterAndLetterCharacters_ShouldThrow()
         {
 
-            var sourceAccountNumber = "IRI";
+            var sourceAccountNumber = "IRR";
             var destinationAccountNumber = "1234567891235";
             var currency = "1U45";
             Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, currency);
             Assert.Throws<ArgumentException>(transaction);
 
+        }
+
+        [Fact]
+        public void UpperCase_vs_LowerCaseCurrency_ShouldBeSame()
+        {
+            var lowCurrency = new Currency("usd");
+            var upperCurrency = new Currency("USD");
+
+            Assert.Equal(lowCurrency, upperCurrency);
         }
     }
 }

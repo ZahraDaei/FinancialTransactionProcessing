@@ -17,7 +17,6 @@
             {
                 return false;
             }
-            this.GetHashCode();
             return accountNumber.Value == Value;
         }
 
@@ -26,12 +25,12 @@
             return this.Value.GetHashCode();
         }
 
-        public static bool operator == (AccountNumber a, AccountNumber b)
+        public static bool operator ==(AccountNumber a, AccountNumber b)
         {
             if (ReferenceEquals(a, null) && ReferenceEquals(b, null)) return true;
 
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null)) return false;
-        
+
 
             return a.Value == b.Value;
         }
@@ -45,4 +44,4 @@
             return a.Value != b.Value;
         }
     }
-}       
+}
