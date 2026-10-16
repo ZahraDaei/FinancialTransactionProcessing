@@ -23,8 +23,8 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         public void CreateTransaction_withSameSourceAndDestination_shouldThrow()
         {
             //Arrange
-            var sourceAccountNumber = "IRR";
-            var destinationAccountNumber = "IRR";
+            var sourceAccountNumber = "8934567891235";
+            var destinationAccountNumber = "8934567891235";
 
             //Act
             Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IRR");
@@ -38,7 +38,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
         {
             //Arrange
             var sourceAccountNumber = "1234567891234677";
-            var destinationAccountNumber = "IRR";
+            var destinationAccountNumber = "123";
 
             //Act
             Action transaction = () => new Transaction(sourceAccountNumber, destinationAccountNumber, 1000M, "IRR");
