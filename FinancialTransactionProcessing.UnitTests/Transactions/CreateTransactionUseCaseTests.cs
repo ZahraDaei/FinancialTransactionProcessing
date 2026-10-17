@@ -15,14 +15,14 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
             var transactionExecuter = new CreateTransactionUseCase(moqTransactionRepository.Object);
 
             Transaction save = null;
-            //moqTransactionRepository.Setup(z => z.AddAsync(It.IsAny<Transaction>(), It.IsAny<CancellationToken>()))
-                                    .Callback<Transaction, CancellationToken>((x,y)=> save=x);
+            moqTransactionRepository.Setup(z => z.AddAsync(It.IsAny<Transaction>(), It.IsAny<CancellationToken>()))
+                                    .Callback<Transaction, CancellationToken>((x, y) => save = x);
             var transaction = await transactionExecuter.Execute("1234567891234",
                                                           "4567891236541",
                                                           156000,
                                                           "IRR",
                                                           CancellationToken.None);
-            moqTransactionRepository.Verify(x => x.AddAsync(It.Is<Transaction>(x=>x.Amount==156000&&x.Status==TransactionStatus.Pending),
+            moqTransactionRepository.Verify(x => x.AddAsync(It.Is<Transaction>(x => x.Amount == 156000 && x.Status == TransactionStatus.Pending),
                                                             It.IsAny<CancellationToken>()), Times.Once);
 
 
@@ -32,7 +32,7 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
             Assert.Equal("1234567891234", save.SourceAccount.Value);
             Assert.Equal("4567891236541", save.DestinationAccount.Value);
             Assert.Equal("IRR", save.Currency.Value);
-        } 
+        }
         [Fact]
         public async Task Execute_WithWrongInput_ShouldThrow()
         {
@@ -40,14 +40,14 @@ namespace FinancialTransactionProcessing.UnitTests.Transactions
 
             var transactionExecuter = new CreateTransactionUseCase(moqTransactionRepository.Object);
 
-            Action transactionCreation =async ()=> await transactionExecuter.Execute("12345678934",
+            Func<Task> transactionCreation = () => transactionExecuter.Execute("123456734",
                                                           "4567891236541",
                                                           156000,
                                                           "IRR",
                                                           CancellationToken.None);
-            //moqTransactionRepository.Verify(x => x.AddAsync(It.IsAny<Transaction>(),
-            //                                                It.IsAny<CancellationToken>()), Times.Never);
-            Assert.Throws<ArgumentException>(transactionCreation);
+            await Assert.ThrowsAsync<ArgumentException>(transactionCreation);
+
+            moqTransactionRepository.Verify(x => x.AddAsync(It.IsAny<Transaction>(), It.IsAny<CancellationToken>()), Times.Never);
 
         }
     }
