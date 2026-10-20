@@ -5,8 +5,8 @@ namespace FinancialTransactionProcessing.Domain.Entities
     public class Transaction
     {
         public Guid Id { get; private set; }
-        public AccountNumber SourceAccount { get; private set; }
-        public AccountNumber DestinationAccount { get; private set; }
+        public ValueObjects.AccountNumber SourceAccount { get; private set; }
+        public ValueObjects.AccountNumber DestinationAccount { get; private set; }
         public decimal Amount { get; private set; }
         public Currency Currency { get; private set; }
         public TransactionStatus Status { get; private set; }
@@ -18,8 +18,8 @@ namespace FinancialTransactionProcessing.Domain.Entities
 
         public Transaction(string sourceAccount, string destinationAccount, decimal amount, string currency)
         {
-            var sourceAccountNumber =new AccountNumber(sourceAccount);
-            var destinationAccountNumber =new AccountNumber(destinationAccount) ;
+            var sourceAccountNumber =new ValueObjects.AccountNumber(sourceAccount);
+            var destinationAccountNumber =new ValueObjects.AccountNumber(destinationAccount) ;
             CheckForSourceAndDestinationAccountNumber(sourceAccountNumber, destinationAccountNumber);
    
             Id = Guid.NewGuid();
@@ -31,7 +31,7 @@ namespace FinancialTransactionProcessing.Domain.Entities
             CreatedAt = DateTime.UtcNow;
         }
 
-        private void CheckForSourceAndDestinationAccountNumber(AccountNumber accountNumber1, AccountNumber accountNumber2)
+        private void CheckForSourceAndDestinationAccountNumber(ValueObjects.AccountNumber accountNumber1, ValueObjects.AccountNumber accountNumber2)
         {
             if (accountNumber1==accountNumber2)
             {

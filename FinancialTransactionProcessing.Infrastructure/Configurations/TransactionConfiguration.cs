@@ -15,14 +15,14 @@ namespace FinancialTransactionProcessing.Infrastructure.Configurations
             builder.Property(t => t.SourceAccount)
                 .HasConversion(
                     account => account.Value,
-                    value => new AccountNumber(value))
+                    value => new Domain.ValueObjects.AccountNumber(value))
                 .HasMaxLength(13)
                 .IsRequired();
 
             builder.Property(t => t.DestinationAccount)
                 .HasConversion(
                     account => account.Value,
-                    value => new AccountNumber(value))
+                    value => new Domain.ValueObjects.AccountNumber(value))
                 .HasMaxLength(13)
                 .IsRequired();
 
