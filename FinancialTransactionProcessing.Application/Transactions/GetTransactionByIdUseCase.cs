@@ -1,21 +1,25 @@
-﻿using FinancialTransactionProcessing.Application.Abstractions.Repositories;
+﻿
+using FinancialTransactionProcessing.Application.Abstractions.Repositories;
 using FinancialTransactionProcessing.Domain.Entities;
 
-namespace FinancialTransactionProcessing.Application.Transactions
+namespace FinancialTransactionProcessing.Application.Transactions;
+
+public class GetTransactionByIdUseCase
 {
-    public class GetTransactionByIdUseCase
+    private readonly ITransactionRepository _transactionRepository;
+
+    public GetTransactionByIdUseCase(ITransactionRepository transactionRepository)
     {
-        private readonly ITransactionRepository _transactionRepository;
+        _transactionRepository = transactionRepository;
+    }
 
-        public GetTransactionByIdUseCase(ITransactionRepository transactionRepository)
-        {
-            _transactionRepository = transactionRepository;
-        }
+    public async Task<Transaction?> Execute(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        if (id == Guid.Empty)
+            throw new ArgumentException("Transaction ID cannot be empty.", nameof(id));
 
-        public async Task<Transaction> Execute(Guid id, CancellationToken cancellationToken)
-        {
-            var transaction = await _transactionRepository.GetByIdAsync(id, cancellationToken);
-            return transaction;
-        }
+        return await _transactionRepository.GetByIdAsync(id, cancellationToken);
     }
 }

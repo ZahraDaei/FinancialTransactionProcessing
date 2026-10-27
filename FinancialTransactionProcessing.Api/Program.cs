@@ -4,13 +4,13 @@ using FinancialTransactionProcessing.Application.Transactions;
 using FinancialTransactionProcessing.Infrastructure.Persistence;
 using FinancialTransactionProcessing.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<CreateTransactionUseCase>();
 builder.Services.AddScoped<GetTransactionByIdUseCase>();
+builder.Services.AddScoped<GetAllTransactionsUseCase>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TransactionDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<ITransactionRepository,TransactionRepository>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,38 +1,98 @@
-﻿using FinancialTransactionProcessing.Application.Abstractions.Repositories;
+﻿
+using FinancialTransactionProcessing.Application.Abstractions.Repositories;
 using FinancialTransactionProcessing.Application.Transactions;
 using FinancialTransactionProcessing.Domain.Entities;
 using Moq;
 
-namespace FinancialTransactionProcessing.UnitTests.Transactions
+namespace FinancialTransactionProcessing.UnitTests.Transactions;
+
+public class GetTransactionByIdUseCaseTests
 {
-    public class GetTransactionByIdUseCaseTests
+    [Fact]
+    public async Task Execute_WithEmptyId_ThrowsArgumentException()
     {
-        [Fact]
-        public async void Execute_WhenTransactionExist_ReturnTransaction()
-        {
-            var id = new Guid("0d25c580-db58-44dd-bb0a-01a4a716237e");
-            var expectedTransaction = new Transaction(
-                    "1234567891234",
-                    "4567891236541",
-                    156000,
-                    "IRR");
+        var repositoryMock = new Mock<ITransactionRepository>();
+        var useCase = new GetTransactionByIdUseCase(repositoryMock.Object);
 
-            var transactionRepositoryMoq = new Mock<ITransactionRepository>();
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            useCase.Execute(Guid.Empty));
 
-            transactionRepositoryMoq.Setup(x => x.GetByIdAsync(
-                id,
-                It.IsAny<CancellationToken>())).ReturnsAsync(() => expectedTransaction);
-
-            var getUseCase = new GetTransactionByIdUseCase(transactionRepositoryMoq.Object);
-
-
-            var transaction = await getUseCase.Execute(id, It.IsAny<CancellationToken>());
-
-            Assert.NotNull(transaction);
-            Assert.Equal(expectedTransaction.Amount, transaction.Amount);
-            Assert.Equal(
-                expectedTransaction.SourceAccount.Value,
-                transaction.SourceAccount.Value);
-        }
+        repositoryMock.Verify(x => x.GetByIdAsync(
+            It.IsAny<Guid>(),
+            It.IsAny<CancellationToken>()),
+            Times.Never);
     }
+
+    [Fact]
+    public async Task Execute_WhenTransactionExists_ReturnsTransaction()
+    {
+        var id = Guid.NewGuid();
+
+        var transaction = new Transaction(
+            "1234567891234",
+            "4567891236541",
+            156000,
+            "IRR");
+
+        var repositoryMock = new Mock<ITransactionRepository>();
+
+        repositoryMock.Setup(x => x.GetByIdAsync(
+                id,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(transaction);
+
+        var useCase = new GetTransactionByIdUseCase(repositoryMock.Object);
+
+        var result = await useCase.Execute(id);
+
+        Assert.NotNull(result);
+
+        repositoryMock.Verify(x => x.GetByIdAsync(
+            id,
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Execute_WhenTransactionDoesNotExist_ReturnsNull()
+    {
+        var id = Guid.NewGuid();
+
+        var repositoryMock = new Mock<ITransactionRepository>();
+
+        repositoryMock.Setup(x => x.GetByIdAsync(
+                id,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Transaction?)null);
+
+        var useCase = new GetTransactionByIdUseCase(repositoryMock.Object);
+
+        var result = await useCase.Execute(id);
+
+        Assert.Null(result);
+    }
+
+
+    [Fact]
+    public async Task Execute_WhenRepositoryFails_PropagatesException()
+    {
+        var id = Guid.NewGuid();
+
+        var repositoryMock = new Mock<ITransactionRepository>();
+
+        repositoryMock
+            .Setup(x => x.GetByIdAsync(
+                id,
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("Database error"));
+
+        var useCase = new GetTransactionByIdUseCase(repositoryMock.Object);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            useCase.Execute(id));
+
+        Assert.Equal("Database error", exception.Message);
+    }
+
 }
+

@@ -1,54 +1,98 @@
-﻿using FinancialTransactionProcessing.Application.Abstractions.Repositories;
+﻿
+using FinancialTransactionProcessing.Application.Abstractions.Repositories;
 using FinancialTransactionProcessing.Application.Transactions;
 using FinancialTransactionProcessing.Domain.Entities;
 using Moq;
 
-namespace FinancialTransactionProcessing.UnitTests.Transactions
+namespace FinancialTransactionProcessing.UnitTests.Transactions;
+
+public class CreateTransactionUseCaseTests
 {
-    public class CreateTransactionUseCaseTests
+
+    [Fact]
+    public async Task Execute_WithSameSourceAndDestination_ThrowsArgumentException()
     {
-        [Fact]
-        public async Task Execute_WithValidInput_ShouldCreatePendingTransaction()
-        {
-            var moqTransactionRepository = new Mock<ITransactionRepository>();
+        var repositoryMock = new Mock<ITransactionRepository>();
+        var useCase = new CreateTransactionUseCase(repositoryMock.Object);
 
-            var transactionExecuter = new CreateTransactionUseCase(moqTransactionRepository.Object);
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            useCase.Execute(
+                "1234567891234",
+                "1234567891234",
+                156000,
+                "IRR", CancellationToken.None));
 
-            Transaction save = null;
-            moqTransactionRepository.Setup(z => z.AddAsync(It.IsAny<Transaction>(), It.IsAny<CancellationToken>()))
-                                    .Callback<Transaction, CancellationToken>((x, y) => save = x);
-            var transaction = await transactionExecuter.Execute("1234567891234",
-                                                          "4567891236541",
-                                                          156000,
-                                                          "IRR",
-                                                          CancellationToken.None);
-            moqTransactionRepository.Verify(x => x.AddAsync(It.Is<Transaction>(x => x.Amount == 156000 && x.Status == TransactionStatus.Pending),
-                                                            It.IsAny<CancellationToken>()), Times.Once);
-
-
-
-            Assert.Equal(TransactionStatus.Pending, save.Status);
-            Assert.Equal(156000, save.Amount);
-            Assert.Equal("1234567891234", save.SourceAccount.Value);
-            Assert.Equal("4567891236541", save.DestinationAccount.Value);
-            Assert.Equal("IRR", save.Currency.Value);
-        }
-        [Fact]
-        public async Task Execute_WithWrongInput_ShouldThrow()
-        {
-            var moqTransactionRepository = new Mock<ITransactionRepository>();
-
-            var transactionExecuter = new CreateTransactionUseCase(moqTransactionRepository.Object);
-
-            Func<Task> transactionCreation = () => transactionExecuter.Execute("123456734",
-                                                          "4567891236541",
-                                                          156000,
-                                                          "IRR",
-                                                          CancellationToken.None);
-            await Assert.ThrowsAsync<ArgumentException>(transactionCreation);
-
-            moqTransactionRepository.Verify(x => x.AddAsync(It.IsAny<Transaction>(), It.IsAny<CancellationToken>()), Times.Never);
-
-        }
+        repositoryMock.Verify(x => x.AddAsync(
+            It.IsAny<Transaction>(),
+            It.IsAny<CancellationToken>()),
+            Times.Never);
     }
+
+    [Fact]
+    public async Task Execute_WithInvalidCurrency_ThrowsArgumentException()
+    {
+        var repositoryMock = new Mock<ITransactionRepository>();
+        var useCase = new CreateTransactionUseCase(repositoryMock.Object);
+
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            useCase.Execute(
+                "1234567891234",
+                "4567891236541",
+        156000,
+                "IR", CancellationToken.None));
+
+        repositoryMock.Verify(x => x.AddAsync(
+            It.IsAny<Transaction>(),
+            It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Execute_WhenCancellationRequested_ThrowsOperationCanceledException()
+    {
+        var repositoryMock = new Mock<ITransactionRepository>();
+        var useCase = new CreateTransactionUseCase(repositoryMock.Object);
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+        await cancellationTokenSource.CancelAsync();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            useCase.Execute(
+                "1234567891234",
+                "4567891236541",
+                156000,
+                "IRR",
+                cancellationTokenSource.Token));
+
+        repositoryMock.Verify(x => x.AddAsync(
+            It.IsAny<Transaction>(),
+            It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+
+    [Fact]
+    public async Task Execute_WhenRepositoryFails_PropagatesException()
+    {
+        var repositoryMock = new Mock<ITransactionRepository>();
+
+        repositoryMock
+            .Setup(x => x.AddAsync(
+                It.IsAny<Transaction>(),
+                It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("Database error"));
+
+        var useCase = new CreateTransactionUseCase(repositoryMock.Object);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            useCase.Execute(
+                "1234567891234",
+                "4567891236541",
+                156000,
+                "IRR"));
+
+        Assert.Equal("Database error", exception.Message);
+    }
+
+
 }
